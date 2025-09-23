@@ -42,7 +42,7 @@ export async function submitAttendance(formData: FormData) {
   const totalFemale = Number(data.s_female) + Number(data.ns_female) + Number(data.ch_female) + Number(data.y_female) ;
   const total = totalFemale + totalMale;
     
-
+try{
   await database.attendance.create({
     data: {
       recordedBy: data.recordedBy,
@@ -92,4 +92,8 @@ export async function submitAttendance(formData: FormData) {
 //   revalidatePath('/dashboard')
 
   return { success: true }
+}catch(error) {
+  console.log("An error occurred");
+  return {success: false}
+}
 }

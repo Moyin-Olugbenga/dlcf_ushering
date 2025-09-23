@@ -19,7 +19,8 @@ import {
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { useState, useTransition } from 'react';
-import { submitAttendance } from './api/route'
+import { submitAttendance } from './api/route';
+import { LOCATION, SERVICE } from "@/lib/generated/prisma/client";
 
 export default function Home() {
   const [recordedBy, setRecordedBy] = useState('')
@@ -92,6 +93,7 @@ export default function Home() {
       <CardContent>
         <form onSubmit={handleSubmit}>
           <div className="flex flex-col gap-6">
+               {success && <p className="text-red-500 text-sm">Successfully submitted attendance</p>}
             
             <div className="grid gap-2">
               <Label><b>Recorded by?</b></Label>
@@ -103,7 +105,7 @@ export default function Home() {
 
             </div>
          
-            <div className="grid gap-2">
+            <div className="grid gap-2">-
               <Label><b>Students(male first)</b></Label>
              
              <div className="flex space-x-4"> 
@@ -182,22 +184,22 @@ export default function Home() {
                     <SelectValue placeholder="Select Location" />
                   </SelectTrigger>
                   <SelectContent>
-                      <SelectItem value="RELIGION_GROUND">Religion Ground</SelectItem>
-                      <SelectItem value="EDE_ROAD">Ede road</SelectItem>
-                      <SelectItem value="DAMICO">Damico</SelectItem>
-                      <SelectItem value="KOIWO">Koiwo</SelectItem>
-                      <SelectItem value="URBAN_DAY">Urban day</SelectItem>
-                      <SelectItem value="ELEYELE">Eleyele</SelectItem>
-                      <SelectItem value="AJEBAMIDELE">Ajebamidele</SelectItem>
-                      <SelectItem value="ROAD7">Road 7</SelectItem>
-                      <SelectItem value="QUARTERS">Quarters</SelectItem>
-                      <SelectItem value="PG">PG</SelectItem>
-                      <SelectItem value="MOREMI">Moremi Estate</SelectItem>
-                      <SelectItem value="CORPERS">Corpers</SelectItem>
-                      <SelectItem value="IJEDU">Ijedu</SelectItem>
-                      <SelectItem value="OAU_THC">OAUTHC</SelectItem>
-                      <SelectItem value="CDL">CDL</SelectItem>
-                      <SelectItem value="OMOLE">Omole</SelectItem>
+                      <SelectItem value={LOCATION.RELIGION_GROUND}>Religion Ground</SelectItem>
+                      <SelectItem value={LOCATION.EDE_ROAD}>Ede road</SelectItem>
+                      <SelectItem value={LOCATION.DAMICO}>Damico</SelectItem>
+                      <SelectItem value={LOCATION.KOIWO}>Koiwo</SelectItem>
+                      <SelectItem value={LOCATION.URBAN_DAY}>Urban day</SelectItem>
+                      <SelectItem value={LOCATION.ELEYELE}>Eleyele</SelectItem>
+                      <SelectItem value={LOCATION.AJEBAMIDELE}>Ajebamidele</SelectItem>
+                      <SelectItem value={LOCATION.ROAD7}>Road 7</SelectItem>
+                      <SelectItem value={LOCATION.QUARTERS}>Quarters</SelectItem>
+                      <SelectItem value={LOCATION.PG}>PG</SelectItem>
+                      <SelectItem value={LOCATION.MOREMI}>Moremi Estate</SelectItem>
+                      <SelectItem value={LOCATION.CORPERS}>Corpers</SelectItem>
+                      <SelectItem value={LOCATION.IJEDU}>Ijedu</SelectItem>
+                      <SelectItem value={LOCATION.OAU_THC}>OAUTHC</SelectItem>
+                      <SelectItem value={LOCATION.CDL}>CDL</SelectItem>
+                      <SelectItem value={LOCATION.OMOLE}>Omole</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
@@ -212,16 +214,16 @@ export default function Home() {
                     <SelectValue placeholder="Select the Service Day" />
                   </SelectTrigger>
                   <SelectContent>
-                      <SelectItem value="MBS">Monday Bible Study</SelectItem>
-                      <SelectItem value="SWS">Sunday Worship Service</SelectItem>
-                      <SelectItem value="SWM">Saturday Workers Meeting</SelectItem>
-                      <SelectItem value="TRH">Thursday Revival Hour</SelectItem>
-                      <SelectItem value="GCK_DAY1">GCK Day 1</SelectItem>
-                      <SelectItem value="GCK_DAY2">GCK Day 2</SelectItem>
-                      <SelectItem value="GCK_DAY3">GCK Day 3</SelectItem>
-                      <SelectItem value="GCK_DAY4">GCK Day 4</SelectItem>
-                      <SelectItem value="GCK_DAY5">GCK Day 5</SelectItem>
-                      <SelectItem value="GCK_DAY6">GCK Day 6</SelectItem>
+                      <SelectItem value={SERVICE.SWS}>Sunday Worship Service</SelectItem>
+                      <SelectItem value={SERVICE.MBS}>Monday Bible Study</SelectItem>
+                      <SelectItem value={SERVICE.SWM}>Saturday Workers Meeting</SelectItem>
+                      <SelectItem value={SERVICE.TRH}>Thursday Revival Hour</SelectItem>
+                      <SelectItem value={SERVICE.GCK_DAY1}>GCK Day 1</SelectItem>
+                      <SelectItem value={SERVICE.GCK_DAY2}>GCK Day 2</SelectItem>
+                      <SelectItem value={SERVICE.GCK_DAY3}>GCK Day 3</SelectItem>
+                      <SelectItem value={SERVICE.GCK_DAY4}>GCK Day 4</SelectItem>
+                      <SelectItem value={SERVICE.GCK_DAY5}>GCK Day 5</SelectItem>
+                      <SelectItem value={SERVICE.GCK_DAY6}>GCK Day 6</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
