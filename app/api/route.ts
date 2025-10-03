@@ -2,7 +2,8 @@
 
 import { database } from '@/prisma/config'
 import  { attendanceSchema} from '@/app/schema/attendance'
-import { revalidatePath } from 'next/cache'
+// import { revalidatePath } from 'next/cache'
+import { AttendanceType } from '@/lib/generated/prisma/client'
 
 
 export async function submitAttendance(formData: FormData) {
@@ -55,32 +56,32 @@ try{
       breakdowns: {
         create: [
           {
-            type: 'STUDENT',
+            type: AttendanceType.STUDENT,
             male: Number(data.s_male),
             female: Number(data.s_female),
           },
           {
-            type: 'NON_STUDENT',
+            type: AttendanceType.NON_STUDENT,
             male: Number(data.ns_male),
             female: Number(data.ns_female),
           },
           {
-            type: 'YOUTH',
+            type: AttendanceType.YOUTH,
             male: Number(data.y_male),
             female: Number(data.y_female),
           },
           {
-            type: 'CHILDREN',
+            type: AttendanceType.CHILDREN,
             male: Number(data.ch_male),
             female: Number(data.ch_female),
           },
           {
-            type: 'CONVERT',
+            type: AttendanceType.CONVERT,
             male: Number(data.con_male),
             female: Number(data.con_female),
           },
           {
-            type: 'NEWCOMER',
+            type: AttendanceType.NEWCOMER,
             male: Number(data.nc_male),
             female: Number(data.nc_female),
           },
