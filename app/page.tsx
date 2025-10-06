@@ -18,7 +18,7 @@ import {
 } from "@/components/ui/select";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
-import { useState, useTransition } from 'react';
+import { SetStateAction, useState, useTransition } from 'react';
 import { submitAttendance } from './api/route';
 import { LOCATION, SERVICE } from "@/lib/generated/prisma/client";
 
@@ -93,7 +93,8 @@ export default function Home() {
       <CardContent>
         <form onSubmit={handleSubmit}>
           <div className="flex flex-col gap-6">
-               {success && <p className="text-red-500 text-sm">Successfully submitted attendance</p>}
+               {errors && <p className="text-red-500 text-sm">{errors[0]}</p>}
+      {success && <p className="text-green-600 text-sm mt-2">Attendance submitted successfully ✅</p>}
             
             <div className="grid gap-2">
               <Label><b>Recorded by?</b></Label>
@@ -105,7 +106,7 @@ export default function Home() {
 
             </div>
          
-            <div className="grid gap-2">-
+            <div className="grid gap-2">
               <Label><b>Students(male first)</b></Label>
              
              <div className="flex space-x-4"> 
@@ -179,7 +180,7 @@ export default function Home() {
             <div className="grid gap-2">
                 <Label htmlFor="">Location</Label>
               <div className="flex items-center">
-                <Select name="location"  value={location} onValueChange={(value) => setLocation(value)}>
+                <Select name="location"  value={location} onValueChange={(value: SetStateAction<string>) => setLocation(value)}>
                   <SelectTrigger className="w-full">
                     <SelectValue placeholder="Select Location" />
                   </SelectTrigger>
@@ -209,7 +210,7 @@ export default function Home() {
             <div className="grid gap-2">
                 <Label htmlFor="">Service</Label>
               <div className="flex items-center">
-                <Select name="service" value={serviceType} onValueChange={(value) => setServiceType(value)}>
+                <Select name="service" value={serviceType} onValueChange={(value: SetStateAction<string>) => setServiceType(value)}>
                   <SelectTrigger className="w-full">
                     <SelectValue placeholder="Select the Service Day" />
                   </SelectTrigger>
@@ -239,7 +240,6 @@ export default function Home() {
            
         </form>
         <CardAction>
-      {success && <p className="text-green-600 text-sm mt-2">Attendance submitted successfully ✅</p>}
         </CardAction>
       </CardContent>
     </Card>

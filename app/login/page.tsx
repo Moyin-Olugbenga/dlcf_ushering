@@ -1,5 +1,6 @@
 "use client";
-import { Button } from "@/components/ui/button";
+import { LoginForm } from "@/components/LoginForm";
+
 import {
   Card,
   CardAction,
@@ -9,23 +10,17 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import { Label } from "@/components/ui/label";
-import { Input } from "@/components/ui/input";
-import { useState, useTransition } from 'react';
-import { LOCATION, SERVICE } from "@/lib/generated/prisma/client";
-import { Formik } from "formik";
-import { useRouter } from "next/navigation";
-import { LoginForm } from "@/components/LoginForm";
 
 export default function Login() {
     return (
-        <LoginForm />
+  <div className="flex justify-center items-center ">
+    <Card className="w-full max-w-sm my-10">
+        <CardContent>
+            <LoginForm />
+        <CardAction>
+        </CardAction>
+      </CardContent>
+    </Card>
+  </div>
     );
 }

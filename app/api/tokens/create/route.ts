@@ -25,6 +25,6 @@ export const POST = async(req: NextRequest) => {
 
         }catch(error){
             console.error(error);
-            throw new Error("An error occurred while creating bin.");
+            throw new Error("An error occurred while creating token.");
         }
     }

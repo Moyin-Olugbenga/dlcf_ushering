@@ -46,7 +46,7 @@ export default function TokenPage() {
         <div className="flex flex-col gap-6">
           <Card  className="w-[500px] max-w-sm">
             <CardHeader>
-              <CardTitle>Smart waste bin system</CardTitle>
+              <CardTitle>DLCF OAU ATTENDANCE SYSTEM</CardTitle>
             </CardHeader>
             <CardContent>
               <Button onClick={createToken} aria-disabled={isPending}>{isPending ? "Creating..." : "Create Token"}</Button>
