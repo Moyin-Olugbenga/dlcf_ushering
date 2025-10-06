@@ -19,7 +19,7 @@ import {
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { SetStateAction, useState, useTransition } from 'react';
-import { submitAttendance } from './api/route';
+import { submitAttendance } from './api/auth/attendance/attendance';
 import { LOCATION, SERVICE } from "@/lib/generated/prisma/client";
 
 export default function Home() {

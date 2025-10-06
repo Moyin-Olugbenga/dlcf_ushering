@@ -3,10 +3,10 @@ import { database } from "@/config/db";
 import { LOCATION } from "@/lib/generated/prisma";
 import { NextRequest, NextResponse } from "next/server";
 
-export const GET = async(req: NextRequest, context: { params: Promise<{ location: LOCATION }> }
+export const GET = async(req: NextRequest, context: { params: Promise<{ location: string }> }
 ) => {
-    const { month } = await req.json(); // e.g. "2025-07"
-
+    const { month } = await req.json();
+        const {location} = await context.params; 
     if (!month || !location) {
       return NextResponse.json({ error: "Month required" }, { status: 400 });
     }
@@ -16,7 +16,14 @@ export const GET = async(req: NextRequest, context: { params: Promise<{ location
     endDate.setMonth(endDate.getMonth() + 1);
 
     try{
-        const {location} = await context.params;
+    const locationParam = location.toUpperCase() as keyof typeof LOCATION;
+
+    if (!(locationParam in LOCATION)) {
+      return NextResponse.json({ error: "Invalid location" }, { status: 400 });
+    }
+
+    const location = LOCATION[locationParam];
+
         const records = await database.attendance.findMany({
             where:{
                 location: location,
