@@ -30,7 +30,7 @@ export default function MonthlyAttendance() {
       .then((res) => res.json())
       .then((res) => setData(res.data.data));
   }, [month, location]);
-ghtr bhr
+
   if (!data) return <p className="p-6">Loading...</p>;
 
   return (
