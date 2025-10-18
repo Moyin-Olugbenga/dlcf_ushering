@@ -1,38 +1,40 @@
 "use server";
-import { database } from "@/config/db";
-import bcrypt from "bcryptjs";
 import { NextRequest, NextResponse } from "next/server";
 import { Session } from "@/classes/Session.class";
+import { UserSignInData } from "@/app/types/auth";
+import { SignInSchema } from "../../schemaDefinitions/AuthSchema";
+import { Auth } from "@/classes/Auth.class";
 
 export const POST = async(req: NextRequest) => {
     try{
         
-        const { username, password } = await req.json();
-            
-            const user = await database.admin.findUnique({
-                where: {
-                    username: username
-                }
-            });
-
-            const passwordCheck = await bcrypt.compare(password, user?.password as string);
-            const userId = user?.uuid as string;
         
-            if(!passwordCheck){
-                return NextResponse.json({error: "Incorrect password"}, {status: 401});
-            }
+        const data: UserSignInData = await req.json();
+        const isValid = SignInSchema.safeParse(data);
 
-            await Session.createSession(userId);
-            
-            return NextResponse.json(
-                {
-                    message: "Admin logged in successfully",
-                },
-                {status: 200}
-            )
-
-        }catch(error){
-            console.error(error);
-            return NextResponse.json({error: "An error occurred while logging in the user."}, {status: 500});
+        if (!isValid.success) {
+            throw new Error('Invalid input');
         }
+        const auth = await Auth.SignIn(data);
+        if (!auth) {
+            return NextResponse.json({error: true, message: "Invalid login details", status: 401});
+        }
+
+        const session = await Session.createSession(auth.uuid);
+        if (!session) {
+            return NextResponse.json({error: true, message: "Error creating session", status: 500});
+        }
+        console.log(auth);
+        return NextResponse.json(
+            {
+                message: "User logged in successfully",
+                error: false,
+                data: auth,
+                status: 200
+            }
+        )
+    }catch(error){
+        console.error(error);
+        return NextResponse.json({error: "An error occurred while logging in the user.", status: 500});
     }
+}

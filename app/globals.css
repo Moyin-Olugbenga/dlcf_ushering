@@ -119,4 +119,9 @@
   body {
     @apply bg-background text-foreground;
   }
+  .error-feedback {
+    color: #ff0000;
+    font-size: 0.875rem;
+    margin-top: 0.25rem;
+  }
 }

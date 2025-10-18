@@ -9,6 +9,11 @@ export class Session {
             process.env.JWT_SECRET as string,
             { expiresIn: "7d" }
         )
+        const refreshToken = jwt.sign(
+            { userId},
+            process.env.JWT_REFRESH_SECRET as string,
+            { expiresIn: "30d" }
+        )
 
         const cookiesStore = await cookies();
 
@@ -20,26 +25,36 @@ export class Session {
             path: '/',
         });
 
-    }
-    public static async refreshToken(req: UNextRequest) {
-        try{
-            const refreshToken = req.cookies.get("noisses_hserfer")?.value;
-            if (!refreshToken) {
-                throw new Error("Refresh token not found.");
-            }
+        cookiesStore.set("hserefer_nekot", refreshToken, {
+            httpOnly: true,
+            secure: true,
+            expires: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000),
+            sameSite: 'lax',
+            path: '/',
+        });
+        return true;
 
-            const payload = await verifyJWTToken(refreshToken, "refresh") as JwtPayload;
-            const newToken = jwt.sign(
-                { userId: payload?.userId, fellowshipId: payload.fellowshipId },
-                process.env.JWT_SECRET as string,
-                { expiresIn: "7d" }
-            )
-
-            Session.updateSession(newToken);
-        }catch(error){
-            throw error;
-        }
     }
+
+    // public static async refreshToken(req: UNextRequest) {
+    //     try{
+    //         const refreshToken = req.cookies.get("noisses_hserfer")?.value;
+    //         if (!refreshToken) {
+    //             throw new Error("Refresh token not found.");
+    //         }
+
+    //         const payload = await verifyJWTToken(refreshToken, "refresh") as JwtPayload;
+    //         const newToken = jwt.sign(
+    //             { userId: payload?.userId, fellowshipId: payload.fellowshipId },
+    //             process.env.JWT_SECRET as string,
+    //             { expiresIn: "7d" }
+    //         )
+
+    //         Session.updateSession(newToken);
+    //     }catch(error){
+    //         throw error;
+    //     }
+    // }
 
 
 

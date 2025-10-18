@@ -6,6 +6,8 @@ import {
 } from "recharts";
 import jsPDF from "jspdf";
 import { toPng } from "html-to-image";
+// import { LOCATION } from "@/lib/generated/prisma";
+import { AttendanceField } from "@/app/types/attendance";
 
 
 export default function MonthlyAttendance() {
@@ -15,7 +17,7 @@ export default function MonthlyAttendance() {
     const today = new Date();
     return `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, "0")}`;
   });
-  const [data, setData] = useState<any>(null);
+  const [data, setData] = useState<unknown>(null);
   const COLORS = ["#1E3A8A", "#EF4444", "#3B82F6", "#DC2626", "#7C3AED", "#F59E0B"];
 
   // Fetch attendance when month changes
@@ -66,19 +68,41 @@ export default function MonthlyAttendance() {
 
   if (!data) return <p className="p-6">Loading...</p>;
 
-  const locations = Object.keys(data);
+  // const obj: { [key: string]: unknown } = {};
+  const dataObj = data as Record<
+  string,
+  {
+    NONSTUDENT_MALE?: number;
+    NONSTUDENT_FEMALE?: number;
+    STUDENT_MALE?: number;
+    STUDENT_FEMALE?: number;
+    YOUTH_MALE?: number;
+    YOUTH_FEMALE?: number;
+    CHILDREN_MALE?: number;
+    CHILDREN_FEMALE?: number;
+    GUEST_MALE?: number;
+    GUEST_FEMALE?: number;
+    NEWCOMER_MALE?: number;
+    NEWCOMER_FEMALE?: number;
+    CONVERT_MALE?: number;
+    CONVERT_FEMALE?: number;
+    TOTAL?: number;
+  }
+>;
+
+const locations = Object.keys(dataObj);
 
   // Transform data for charts
-  const chartData = locations.map((loc) => ({
+  const chartData = locations.map((loc: string) => ({
     location: loc,
-    NonStudents: (data[loc].NONSTUDENT_MALE || 0) + (data[loc].NONSTUDENT_FEMALE || 0),
-    Students: (data[loc].STUDENT_MALE || 0) + (data[loc].STUDENT_FEMALE || 0),
-    Youth: (data[loc].YOUTH_MALE || 0) + (data[loc].YOUTH_FEMALE || 0),
-    Children: (data[loc].CHILDREN_MALE || 0) + (data[loc].CHILDREN_FEMALE || 0),
-    Guests: (data[loc].GUEST_MALE || 0) + (data[loc].GUEST_FEMALE || 0),
-    Newcomers: (data[loc].NEWCOMER_MALE || 0) + (data[loc].NEWCOMER_FEMALE || 0),
-    Converts: (data[loc].CONVERT_MALE || 0) + (data[loc].CONVERT_FEMALE || 0),
-    Total: data[loc].TOTAL || 0,
+    NonStudents: (dataObj[loc].NONSTUDENT_MALE || 0) + (dataObj[loc].NONSTUDENT_FEMALE || 0),
+    Students: (dataObj[loc].STUDENT_MALE || 0) + (dataObj[loc].STUDENT_FEMALE || 0),
+    Youth: (dataObj[loc].YOUTH_MALE || 0) + (dataObj[loc].YOUTH_FEMALE || 0),
+    Children: (dataObj[loc].CHILDREN_MALE || 0) + (dataObj[loc].CHILDREN_FEMALE || 0),
+    Guests: (dataObj[loc].GUEST_MALE || 0) + (dataObj[loc].GUEST_FEMALE || 0),
+    Newcomers: (dataObj[loc].NEWCOMER_MALE || 0) + (dataObj[loc].NEWCOMER_FEMALE || 0),
+    Converts: (dataObj[loc].CONVERT_MALE || 0) + (dataObj[loc].CONVERT_FEMALE || 0),
+    Total: dataObj[loc].TOTAL || 0,
   }));
 
   const pieData = [
@@ -122,23 +146,23 @@ export default function MonthlyAttendance() {
       </tr>
     </thead>
     <tbody className="text-black">
-      {[
-        "NONSTUDENT_MALE", "NONSTUDENT_FEMALE",
-        "STUDENT_MALE", "STUDENT_FEMALE",
-        "YOUTH_MALE", "YOUTH_FEMALE",
-        "CHILDREN_MALE", "CHILDREN_FEMALE",
-        "GUEST_MALE", "GUEST_FEMALE",
-        "NEWCOMER_MALE", "NEWCOMER_FEMALE",
-        "CONVERT_MALE", "CONVERT_FEMALE",
-        "TOTAL"
-      ].map((row) => (
+      {( [
+    "NONSTUDENT_MALE", "NONSTUDENT_FEMALE",
+    "STUDENT_MALE", "STUDENT_FEMALE",
+    "YOUTH_MALE", "YOUTH_FEMALE",
+    "CHILDREN_MALE", "CHILDREN_FEMALE",
+    "GUEST_MALE", "GUEST_FEMALE",
+    "NEWCOMER_MALE", "NEWCOMER_FEMALE",
+    "CONVERT_MALE", "CONVERT_FEMALE",
+    "TOTAL",
+  ] as AttendanceField[]).map((row) => (
         <tr key={row} className="border-t">
           <td className="px-4 py-2 font-medium">
             {row.replace(/_/g, " ")}
           </td>
           {locations.map((loc) => (
             <td key={loc} className="px-4 py-2 text-center">
-              {data[loc][row] ?? 0}
+              {dataObj[loc][row] ?? 0}
             </td>
           ))}
         </tr>

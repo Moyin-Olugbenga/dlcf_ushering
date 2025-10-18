@@ -57,7 +57,7 @@ export function NavUser({
                 <span className="truncate font-medium">{user.name}</span>
                 <span className="text-muted-foreground truncate text-xs">
                   {user.email}
-                </span>
+                </span>1
               </div>
               <IconDotsVertical className="ml-auto size-4" />
             </SidebarMenuButton>

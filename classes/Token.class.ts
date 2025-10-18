@@ -51,9 +51,9 @@ export class Token {
         }
     }
     private static async generateToken(n: number) {
-        var chars = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
-        var token = '';
-        for(var i = 0; i < n; i++) {
+        const chars = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+        let token = '';
+        for(let i = 0; i < n; i++) {
             token += chars[Math.floor(Math.random() * chars.length)];
         }
         return token;
@@ -64,7 +64,7 @@ export class Token {
     public static async verifyUserToken(req: NextRequest, token: string): Promise<unknown> {
         try {
             if(!token) {
-                throw new AuthError("Admin Not Found")
+                // throw new AuthError("Admin Not Found")
             }
             
             const payload = jwt.verify(token, process.env.JWT_SECRET as string) as JwtPayload;

@@ -2,26 +2,27 @@
 
 import * as React from "react"
 import {
-  IconCamera,
-  IconChartBar,
+  // IconCamera,
+  // IconChartBar,
   IconDashboard,
   IconDatabase,
-  IconFileAi,
-  IconFileDescription,
-  IconFileWord,
-  IconFolder,
-  IconHelp,
+  // IconFileAi,
+  // IconFileDescription,
+  // IconFileWord,
+  // IconFolder,
+  // IconHelp,
   IconInnerShadowTop,
-  IconListDetails,
-  IconReport,
-  IconSearch,
-  IconSettings,
-  IconUsers,
+  // IconListDetails,
+  // IconReport,
+  // IconSearch,
+  // IconSettings,
+  // IconUsers,
 } from "@tabler/icons-react"
+import Image from "next/image";
 
 import { NavDocuments } from "@/components/nav-documents"
-import { NavMain } from "@/components/nav-main"
-import { NavSecondary } from "@/components/nav-secondary"
+// import { NavMain } from "@/components/nav-main"
+// import { NavSecondary } from "@/components/nav-secondary"
 import { NavUser } from "@/components/nav-user"
 import {
   Sidebar,
@@ -42,7 +43,7 @@ const data = {
   documents: [
     {
       name: "Dashboard",
-      url: "/dashboard",
+      url: "/workspace",
       icon: IconDashboard,
     },
     {
@@ -69,7 +70,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
               className="data-[slot=sidebar-menu-button]:!p-1.5"
             >
               <a href="#">
-                <IconInnerShadowTop className="!size-5" />
+                <Image src="/dlcfOAU.jpeg" alt="DLCF Logo" width={50} height={50} className="mx-auto mt-4"/>
                 <span className="text-base font-semibold">DLCF OAU</span>
               </a>
             </SidebarMenuButton>

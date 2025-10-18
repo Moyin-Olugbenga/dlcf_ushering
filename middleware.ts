@@ -1,17 +1,18 @@
 import { Token } from "@/classes/Token.class";
-import { NextResponse, NextRequest } from "next/server";
+import { NextResponse } from "next/server";
+import { UNextRequest } from "./app/types/request";
+import { Auth } from "./classes/Auth.class";
 export const config = {
 //   matcher: ["/api/:path*"], 
   runtime: "nodejs",        
 };
 
-export const middleware = async(req: NextRequest) => {
+export const middleware = async(req: UNextRequest) => {
 
     // authenticate users for specific routes
-    if(req.nextUrl.pathname.startsWith("/attendance")){
+    if(req.nextUrl.pathname.startsWith("/workspace")){
         try{
-           const token = req?.cookies.get("noisses")?.value;
-            await Token.verifyUserToken(req, token);
+            await Auth.verifyToken(req);
         }catch(error){
             console.log(error)
             return NextResponse.redirect(`${process.env.NEXT_PUBLIC_API_LINK}/login`);
