@@ -2,9 +2,10 @@
 
 export interface AuthResponse {
   message: string;
-  uuid: string;
+  uuid?: string;
   email?: string;
-  userType: string;
+  userType?: string;
+  error?: boolean;
 }
 
 

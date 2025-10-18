@@ -22,7 +22,11 @@ export class Auth {
       },
     });
     if (userExists) {
-      throw new Error('User already exists');
+      const errorResponse: AuthResponse = {
+        message: "User already exists",
+        error:true
+      };
+      return errorResponse;
     }
     const user = await database.user.create({
       data: {
@@ -32,7 +36,11 @@ export class Auth {
     });
 
     if (!user) {
-      throw new Error('Error creating user');
+      const errorResponse: AuthResponse = {
+        message: "Error creating user",
+        error:true
+      };
+      return errorResponse;
     }
     const response: AuthResponse = {
       message: 'User successfully Registered',
@@ -50,13 +58,21 @@ export class Auth {
       },
     });
     if (!user) {
-      throw new Error('User not found');
+      const errorResponse: AuthResponse = {
+        message: "User not found",
+        error:true
+      };
+      return errorResponse;
     }
 
     const password_verify = await bcrypt.compare(data.password, user?.password);
 
     if (!password_verify) {
-      throw new Error('Invalid login details');
+      const errorResponse: AuthResponse = {
+        message: "Invalid login details",
+        error:true
+      };
+      return errorResponse;
     }
     const response : AuthResponse = {
       message: 'User logged in successfully',

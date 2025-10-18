@@ -16,11 +16,11 @@ export const POST = async(req: NextRequest) => {
             throw new Error('Invalid input');
         }
         const auth = await Auth.SignIn(data);
-        if (!auth) {
-            return NextResponse.json({error: true, message: "Invalid login details", status: 401});
+        if (!auth || auth?.error == true) {
+            return NextResponse.json({error: true, message: auth?.message ? auth?.message : "Invalid login details", status: 401});
         }
 
-        const session = await Session.createSession(auth.uuid);
+        const session = await Session.createSession(auth.uuid as string);
         if (!session) {
             return NextResponse.json({error: true, message: "Error creating session", status: 500});
         }
