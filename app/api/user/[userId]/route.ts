@@ -14,7 +14,10 @@ const GetUser = async(req: NextRequest, context: { params: Promise<ContextParams
                 uuid: userId
             },
             omit: {
-                password: true
+                password: true,
+                createdAt: true,
+                updatedAt: true,
+                id: true,
             }
         })
 

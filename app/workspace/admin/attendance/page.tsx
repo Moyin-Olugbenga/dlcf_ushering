@@ -1,10 +1,10 @@
-import { AppSidebar } from "@/components/app-sidebar"
 import { SiteHeader } from "@/components/site-header"
 import {
   SidebarInset,
   SidebarProvider,
 } from "@/components/ui/sidebar"
 import MonthlyAttendance from "@/components/monthlyAttendance"
+import { AdminAppSidebar } from "@/components/app-sidebar-admin"
 // import data from "./data.json"
 
 export default function Page() {
@@ -17,7 +17,7 @@ export default function Page() {
         } as React.CSSProperties
       }
     >
-      <AppSidebar variant="inset" />
+      <AdminAppSidebar variant="inset" />
       <SidebarInset>
         <SiteHeader />
         <div className="flex flex-1 flex-col">

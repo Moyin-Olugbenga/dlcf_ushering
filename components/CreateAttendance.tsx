@@ -5,7 +5,6 @@ import {
   CardContent,
   CardDescription,
   CardHeader,
-  CardTitle,
 } from "@/components/ui/card"
 import {
   Select,
@@ -24,16 +23,21 @@ import Image from "next/image";
 import { LOCATION, SERVICE } from "@/lib/generated/prisma/client";
 import { AttendanceData } from "@/app/types/attendance";
 import { AttendanceSchema } from "@/app/api/schemaDefinitions/Attendance";
+import { TUser } from "@/app/types/user";
 
-export function CreateAttendance() {
+export function CreateAttendance({
+    user
+} : {
+    user: TUser
+}) {
 
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [error, setErrors] = useState("");
     const [success, setSuccess] = useState("");
 
     const initialValues : AttendanceData = {
-      recordedById: "",
-      location: LOCATION.RELIGION_GROUND,
+      recordedById: user.uuid as string,
+      location: user.location as LOCATION,
       service: SERVICE.SWS,
       serviceDate: "",
       sMale:0,
@@ -56,18 +60,19 @@ export function CreateAttendance() {
         <Formik
             initialValues={initialValues}
             validate={async (values) => {
+              console.log("Validating values:", values);
                 const validateFn = await Utility.zodValidate(AttendanceSchema);
                 return validateFn(values);
             }}
             onSubmit={async (values) => {
                 try{
                     setIsSubmitting(true);
-                    const {data} = await axios.post("/api/auth/signUp", {...values});
+                    const {data} = await axios.post("/api/attendance/create", {...values});
                     if (data.error == true) {
                       setErrors(data.message);
                     } 
                     else {
-                      setSuccess("Account created successfully");
+                      setSuccess("Attendance created successfully");
                     }
                     setIsSubmitting(false);
                 }catch(error){
@@ -83,7 +88,6 @@ export function CreateAttendance() {
         <CardHeader className="text-center">
         <Image src="/dlcfOAU.jpeg" alt="DLCF Logo" width={120} height={120} className="mx-auto mt-4"/>
         <h2 className="text-xl">DLCF OAU</h2>
-          <CardTitle className="text-md">Signup as an usher</CardTitle>
           <CardDescription>
               {error && <p>{error}</p>}
            
@@ -91,8 +95,51 @@ export function CreateAttendance() {
         </CardHeader>
         <CardContent>
            <form  method="POST" onSubmit={handleSubmit} className="max-w-3xl mx-auto space-y-8 p-6 shadow-md rounded-xl">
-             <div className="grid gap-6">
-              {error && <p>{error}</p>}
+             <div className="grid gap-6"> 
+              {error && 
+              <p className="error-feedback">
+                <div role="alert" className="rounded-md border border-gray-300 bg-white p-4 shadow-sm">
+                    <div className="flex items-start gap-4">
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        strokeWidth="1.5"
+                        stroke="currentColor"
+                        className="size-6 text-red-600"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                        />
+                      </svg>
+                      <div className="flex-1">
+                        <strong className="font-medium text-gray-900"> Success</strong>
+                        <p className="mt-0.5 text-sm text-gray-700">{error}</p>
+                      </div>
+                      <button
+                        className="-m-3 rounded-full p-1.5 text-gray-500 transition-colors hover:bg-gray-50 hover:text-gray-700"
+                        type="button"
+                        aria-label="Dismiss alert"
+                      >
+                        <span className="sr-only">Dismiss popup</span>
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          fill="none"
+                          viewBox="0 0 24 24"
+                          strokeWidth="1.5"
+                          stroke="currentColor"
+                          className="size-5"
+                        >
+                          <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+                        </svg>
+                      </button>
+                    </div>
+                  </div>
+
+                </p>
+                 } 
               {success && 
               <p className="success-feedback">
                 <div role="alert" className="rounded-md border border-gray-300 bg-white p-4 shadow-sm">
@@ -113,7 +160,7 @@ export function CreateAttendance() {
                       </svg>
                       <div className="flex-1">
                         <strong className="font-medium text-gray-900"> Success</strong>
-                        <p className="mt-0.5 text-sm text-gray-700">You can proceed to login now.</p>
+                        <p className="mt-0.5 text-sm text-gray-700">{success}</p>
                       </div>
                       <button
                         className="-m-3 rounded-full p-1.5 text-gray-500 transition-colors hover:bg-gray-50 hover:text-gray-700"
@@ -144,8 +191,8 @@ export function CreateAttendance() {
                   <Label><b>Students(male first)</b></Label>
                   
                   <div className="flex space-x-4"> 
-                      <Input type="number" placeholder="Male" value={values.sMale} onChange={handleChange} onBlur={handleBlur} required  />
-                      <Input type="number" placeholder="Female" value={values.sFemale} onChange={handleChange} onBlur={handleBlur} required  />
+                      <Input type="number" placeholder="Male" name="sMale" value={values.sMale} onChange={handleChange} onBlur={handleBlur} required  />
+                      <Input type="number" placeholder="Female" name="sFemale" value={values.sFemale} onChange={handleChange} onBlur={handleBlur} required  />
                   </div>
                   {touched?.sMale && errors?.sMale && <div className='error-feedback'>{errors?.sMale}</div>}
                   {touched?.sFemale && errors?.sFemale && <div className='error-feedback'>{errors?.sFemale}</div>}
@@ -153,8 +200,8 @@ export function CreateAttendance() {
                 <div className="grid gap-1">
                   <Label><b>Non Students(male first)</b></Label>
                   <div className="flex space-x-4"> 
-                      <Input type="number" placeholder="Male" value={values.nsMale} onChange={handleChange} onBlur={handleBlur} required  />
-                      <Input type="number" placeholder="Female" value={values.nsFemale} onChange={handleChange} onBlur={handleBlur} required  />
+                      <Input type="number" placeholder="Male" name="nsMale" value={values.nsMale} onChange={handleChange} onBlur={handleBlur} required  />
+                      <Input type="number" placeholder="Female" name="nsFemale" value={values.nsFemale} onChange={handleChange} onBlur={handleBlur} required  />
                   </div>
                   {touched?.nsMale && errors?.nsMale && <div className='error-feedback'>{errors?.nsMale}</div>}
                   {touched?.nsFemale && errors?.nsFemale && <div className='error-feedback'>{errors?.nsFemale}</div>}
@@ -163,8 +210,8 @@ export function CreateAttendance() {
                 <div className="grid gap-1">
                   <Label><b>Youth(male first)</b></Label>
                   <div className="flex space-x-4"> 
-                      <Input type="number" placeholder="Male" value={values.yMale} onChange={handleChange} onBlur={handleBlur} required  />
-                      <Input type="number" placeholder="Female" value={values.yFemale} onChange={handleChange} onBlur={handleBlur} required  />
+                      <Input type="number" placeholder="Male" name="yMale" value={values.yMale} onChange={handleChange} onBlur={handleBlur} required  />
+                      <Input type="number" placeholder="Female" name="yFemale" value={values.yFemale} onChange={handleChange} onBlur={handleBlur} required  />
                   </div>
                   {touched?.yMale && errors?.yMale && <div className='error-feedback'>{errors?.yMale}</div>}
                   {touched?.yFemale && errors?.yFemale && <div className='error-feedback'>{errors?.yFemale}</div>}
@@ -173,8 +220,8 @@ export function CreateAttendance() {
                   <Label><b>Children(male first)</b></Label>
 
                   <div className="flex space-x-4">
-                      <Input type="number" placeholder="Male" value={values.chMale} onChange={handleChange} onBlur={handleBlur} required  />
-                      <Input type="number" placeholder="Female" value={values.chFemale} onChange={handleChange} onBlur={handleBlur} required  />
+                      <Input type="number" placeholder="Male" name="chMale" value={values.chMale} onChange={handleChange} onBlur={handleBlur} required  />
+                      <Input type="number" placeholder="Female" name="chFemale" value={values.chFemale} onChange={handleChange} onBlur={handleBlur} required  />
                   </div>
                   {touched?.chMale && errors?.chMale && <div className='error-feedback'>{errors?.chMale}</div>}
                   {touched?.chFemale && errors?.chFemale && <div className='error-feedback'>{errors?.chFemale}</div>}
@@ -184,8 +231,8 @@ export function CreateAttendance() {
                   <Label><b>Converts(male first)</b></Label>
                   
                   <div className="flex space-x-4"> 
-                      <Input type="number" placeholder="Male" value={values.conMale} onChange={handleChange} onBlur={handleBlur} required  />
-                      <Input type="number" placeholder="Female" value={values.conFemale} onChange={handleChange} onBlur={handleBlur} required  />
+                      <Input type="number" placeholder="Male" name="conMale" value={values.conMale} onChange={handleChange} onBlur={handleBlur} required  />
+                      <Input type="number" placeholder="Female" name="conFemale" value={values.conFemale} onChange={handleChange} onBlur={handleBlur} required  />
                   </div>
                   {touched?.conMale && errors?.conMale && <div className='error-feedback'>{errors?.conMale}</div>}
                   {touched?.conFemale && errors?.conFemale && <div className='error-feedback'>{errors?.conFemale}</div>}
@@ -195,8 +242,8 @@ export function CreateAttendance() {
                   <Label><b>Newcomers(male first)</b></Label>
                   
                   <div className="flex space-x-4"> 
-                      <Input type="number" placeholder="Male" value={values.ncMale} onChange={handleChange} onBlur={handleBlur} required  />
-                      <Input type="number" placeholder="Female" value={values.ncFemale} onChange={handleChange} onBlur={handleBlur} required  />
+                      <Input type="number" placeholder="Male" name="ncMale" value={values.ncMale} onChange={handleChange} onBlur={handleBlur} required  />
+                      <Input type="number" placeholder="Female" name="ncFemale" value={values.ncFemale} onChange={handleChange} onBlur={handleBlur} required  />
                   </div>
                   {touched?.ncMale && errors?.ncMale && <div className='error-feedback'>{errors?.ncMale}</div>}
                   {touched?.ncFemale && errors?.ncFemale && <div className='error-feedback'>{errors?.ncFemale}</div>}
@@ -204,8 +251,8 @@ export function CreateAttendance() {
                 <div className="grid gap-1">
                   <Label><b>Guests(male first)</b></Label>
                   <div className="flex space-x-4"> 
-                      <Input type="number" placeholder="Male" value={values.gMale} onChange={handleChange} onBlur={handleBlur} required  />
-                      <Input type="number" placeholder="Female" value={values.gFemale} onChange={handleChange} onBlur={handleBlur} required  />
+                      <Input type="number" placeholder="Male" name="gMale" value={values.gMale} onChange={handleChange} onBlur={handleBlur} required  />
+                      <Input type="number" placeholder="Female" name="gFemale" value={values.gFemale} onChange={handleChange} onBlur={handleBlur} required  />
                   </div>
                   {touched?.gMale && errors?.gMale && <div className='error-feedback'>{errors?.gMale}</div>}
                   {touched?.gFemale && errors?.gFemale && <div className='error-feedback'>{errors?.gFemale}</div>}
@@ -214,7 +261,7 @@ export function CreateAttendance() {
                 <div className="grid gap-1">
                     <Label htmlFor="">Service Date</Label>
                   <div className="flex items-center">
-                    <Input type="date" name="date" value={values.serviceDate} onChange={handleChange} onBlur={handleBlur} required />
+                    <Input type="date" name="serviceDate" value={values.serviceDate} onChange={handleChange} onBlur={handleBlur} required />
                   </div>
                   {touched?.serviceDate && errors?.serviceDate && <div className='error-feedback'>{errors?.serviceDate}</div>}
                 </div>
@@ -246,7 +293,7 @@ export function CreateAttendance() {
     
               </div>
               <div  className="flex-col gap-1"> 
-                <Button variant="outline" type="submit" disabled={isSubmitting} style={{ marginTop: '1.5rem' }}>
+                <Button type="submit" className="w-full bg-[#8b2e2e] hover:bg-[#b72f2f]" disabled={isSubmitting} style={{ marginTop: '1.5rem' }}>
                   {isSubmitting ? 'Submitting...' : 'Submit Attendance'}
                 </Button>
               </div>

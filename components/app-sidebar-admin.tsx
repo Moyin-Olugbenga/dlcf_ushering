@@ -43,23 +43,23 @@ const data = {
   documents: [
     {
       name: "Dashboard",
-      url: "/workspace/usher",
+      url: "/workspace/admin",
       icon: IconDashboard,
     },
     {
       name: "All attendance",
-      url: "/workspace/usher/attendance",
+      url: "/workspace/admin/attendance",
       icon: IconDatabase,
     },
     {
-      name: "Create attendance",
-      url: "/workspace/usher/attendance/create",
+      name: "Attendance by location",
+      url: "/workspace/admin/attendance/location",
       icon: IconDatabase,
     },
   ],
 }
 
-export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
+export function AdminAppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   return (
     <Sidebar collapsible="offcanvas" {...props}>
       <SidebarHeader>

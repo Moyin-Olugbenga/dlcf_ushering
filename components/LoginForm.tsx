@@ -23,7 +23,6 @@ import Link from "next/link";
 export function LoginForm() {
 
     const [isSubmitting, setIsSubmitting] = useState(false);
-    const [message, setMessage] = useState("");
     const [error, setErrors] = useState("");
     const router = useRouter(); 
 
@@ -80,7 +79,6 @@ export function LoginForm() {
               <Image src="/dlcfOAU.jpeg" alt="DLCF Logo" width={120} height={120} className="mx-auto mt-4"/>
                     
           <CardTitle className="text-xl">DLCF OAU</CardTitle>
-              {error && <p>{error}</p>}
           <CardDescription>
             Login with your Credentials
           </CardDescription>
@@ -129,7 +127,6 @@ export function LoginForm() {
                     </div>
                   </div>
                 </p>}
-              {message && <p className="success-feedback">{message}</p>}
 
               <div className="grid gap-6">
                 

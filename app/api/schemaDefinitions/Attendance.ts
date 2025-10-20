@@ -18,4 +18,6 @@ export const AttendanceSchema = z.object({
   conFemale: z.number().min(0, {message: "Female converts count cannot be negative"}),
   ncMale: z.number().min(0, {message: "Male new converts count cannot be negative"}),
   ncFemale: z.number().min(0, {message: "Female new converts count cannot be negative"}),
+  gMale: z.number().min(0, {message: "Male new converts count cannot be negative"}),
+  gFemale: z.number().min(0, {message: "Female new converts count cannot be negative"}),
   })

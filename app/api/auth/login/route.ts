@@ -24,7 +24,7 @@ export const POST = async(req: NextRequest) => {
         if (!session) {
             return NextResponse.json({error: true, message: "Error creating session", status: 500});
         }
-        console.log(auth);
+        // console.log(auth);
         return NextResponse.json(
             {
                 message: "User logged in successfully",

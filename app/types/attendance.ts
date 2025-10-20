@@ -9,6 +9,29 @@ export type ServiceAttendance = {
     location: LOCATION;
 }
 
+
+export type Breakdown = {
+  id: number;
+  type: string;
+  male: number;
+  female: number;
+};
+
+export type AttendanceRecord = {
+  id: number;
+  uuid: string;
+  recordedById: string;
+  location: string;
+  service: string;
+  totalMale: number;
+  totalFemale: number;
+  total: number;
+  attendanceDate: string;
+  createdAt: string;
+  updatedAt: string;
+  breakdowns: Breakdown[];
+};
+
 export type AttendanceField =
   | "NONSTUDENT_MALE" | "NONSTUDENT_FEMALE"
   | "STUDENT_MALE" | "STUDENT_FEMALE"
