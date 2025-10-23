@@ -1,4 +1,4 @@
-import { LOCATION } from "@/lib/generated/prisma";
+import { LOCATION, UserType } from "@/lib/generated/prisma";
 import z from "zod";
 
 const passwordRegex = new RegExp(
@@ -87,3 +87,11 @@ export const UpdatePasswordSchema = z
       });
     }
   });
+
+  export const EditUserSchema = z.object({
+    firstName: z.string().min(3, {message: "Firstname should have at least 3 characters"}),
+    lastName: z.string().min(3, {message: "Lastname should have at least 3 characters"}), 
+    email: z.string().email({message: "Email format is not correct"}),
+    location: z.enum(LOCATION),
+    userType: z.enum(UserType)
+  })

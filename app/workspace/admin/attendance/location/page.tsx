@@ -3,13 +3,13 @@ import {
   SidebarInset,
   SidebarProvider,
 } from "@/components/ui/sidebar"
-import MonthlyLocationAttendance from "@/components/monthlyLocationAttendance"
+import MonthlyLocationAttendance from "@/components/AdminMonthlyLocationAttendance"
 import { useUser } from "@/Store/User"
 import { AdminAppSidebar } from "@/components/app-sidebar-admin"
 
 
 export default function Page() {
-  const { data : user, fetchingUser } = useUser();
+    const { data : user, fetchingUser } = useUser();
   return (
     <SidebarProvider
       style={
@@ -19,7 +19,14 @@ export default function Page() {
         } as React.CSSProperties
       }
     >
-          <AdminAppSidebar variant="inset" />
+      {
+      fetchingUser ? (
+        <div className='mx-4 my-10'>
+          <div className="">Loading...</div>
+        </div>
+      ) : (
+        <>
+      <AdminAppSidebar user={user} variant="inset" />
           <SidebarInset>
             <SiteHeader />
               <div className="flex flex-1 flex-col">
@@ -49,6 +56,7 @@ export default function Page() {
               </div>
             </div>
           </SidebarInset>
+                     </> ) }
         </SidebarProvider>
   )
 }

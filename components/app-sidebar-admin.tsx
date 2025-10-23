@@ -11,11 +11,11 @@ import {
   // IconFileWord,
   // IconFolder,
   // IconHelp,
-  IconInnerShadowTop,
+  // IconInnerShadowTop,
   // IconListDetails,
   // IconReport,
   // IconSearch,
-  // IconSettings,
+  IconSettings,
   // IconUsers,
 } from "@tabler/icons-react"
 import Image from "next/image";
@@ -33,6 +33,9 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from "@/components/ui/sidebar"
+import { TUser } from "@/app/types/user";
+import { logout } from "@/app/api/logout";
+import { Button } from "./ui/button";
 
 const data = {
   user: {
@@ -59,7 +62,19 @@ const data = {
   ],
 }
 
-export function AdminAppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
+export function AdminAppSidebar({
+  user,
+  ...props
+}: { user: TUser } & React.ComponentProps<typeof Sidebar>) {
+  const userdata = {
+    name: user.firstName ? user.firstName : "DLCF User",
+    email: user.email ? user.email : "",
+    avatar: "/avatars/shadcn.jpg",
+  };
+
+  const logoutSide = async ()=>{
+    logout();
+  };
   return (
     <Sidebar collapsible="offcanvas" {...props}>
       <SidebarHeader>
@@ -80,9 +95,13 @@ export function AdminAppSidebar({ ...props }: React.ComponentProps<typeof Sideba
       <SidebarContent>
         {/* <NavMain items={data.navMain} /> */}
         <NavDocuments items={data.documents} />
+    
+        <form action={logoutSide}>
+          <Button className="bg-red-400 w-full text-white" type="submit">Logout</Button>
+        </form>
         </SidebarContent>
       <SidebarFooter>
-        <NavUser user={data.user} />
+        <NavUser user={userdata} />
       </SidebarFooter>
     </Sidebar>
   )

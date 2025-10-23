@@ -6,9 +6,11 @@ import {
   SidebarInset,
   SidebarProvider,
 } from "@/components/ui/sidebar"
+import { useUser } from "@/Store/User";
 
 
 export default function Page() {
+  const { data : user, fetchingUser } = useUser();
   return (
     <SidebarProvider
       style={
@@ -17,8 +19,14 @@ export default function Page() {
           "--header-height": "calc(var(--spacing) * 12)",
         } as React.CSSProperties
       }
-    >
-      <AppSidebar variant="inset" />
+    >{
+      fetchingUser ? (
+        <div className='mx-4 my-10'>
+          <div className=""></div>
+        </div>
+      ) : (
+        <>
+      <AppSidebar user={user} variant="inset" />
       <SidebarInset>
         <SiteHeader />
         <div className="flex flex-1 flex-col">
@@ -30,6 +38,7 @@ export default function Page() {
           </div>
         </div>
       </SidebarInset>
+      </> ) }
     </SidebarProvider>
   )
 }

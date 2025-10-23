@@ -282,6 +282,7 @@ export function CreateAttendance({
                           <SelectItem value={SERVICE.GCK_DAY1}>GCK Day 1</SelectItem>
                           <SelectItem value={SERVICE.GCK_DAY2}>GCK Day 2</SelectItem>
                           <SelectItem value={SERVICE.GCK_DAY3}>GCK Day 3</SelectItem>
+                          <SelectItem value={SERVICE.IMPACT}>Impact Academy</SelectItem>
                           <SelectItem value={SERVICE.GCK_DAY4}>GCK Day 4</SelectItem>
                           <SelectItem value={SERVICE.GCK_DAY5}>GCK Day 5</SelectItem>
                           <SelectItem value={SERVICE.GCK_DAY6}>GCK Day 6</SelectItem>

@@ -1,5 +1,3 @@
-
-import { SummaryEntry } from "@/app/types/attendance";
 import { database } from "@/config/db";
 import { LOCATION } from "@/lib/generated/prisma";
 import { NextRequest, NextResponse } from "next/server";
@@ -37,8 +35,6 @@ export const POST = async(req: NextRequest, context: { params: Promise<{ locatio
                 breakdowns: true,
             }
         });
-
-        console.log(records);
 
         return NextResponse.json({ message: "Attendance gotten Successfully.", data: records }, { status: 200 })
 

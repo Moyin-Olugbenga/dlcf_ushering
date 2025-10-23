@@ -78,7 +78,7 @@ export class Auth {
       message: 'User logged in successfully',
       uuid: user.uuid,
       email: user.email,
-      userType: user.usertype,
+      userType: user.userType,
     };
     return response;
   }

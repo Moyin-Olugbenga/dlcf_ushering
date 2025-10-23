@@ -12,6 +12,7 @@ export type ServiceAttendance = {
 
 export type Breakdown = {
   id: number;
+  uuid: string;
   type: string;
   male: number;
   female: number;
@@ -21,8 +22,8 @@ export type AttendanceRecord = {
   id: number;
   uuid: string;
   recordedById: string;
-  location: string;
-  service: string;
+  location: LOCATION;
+  service: SERVICE;
   totalMale: number;
   totalFemale: number;
   total: number;
@@ -62,3 +63,21 @@ export type AttendanceData = {
     gMale: number;
     gFemale: number;
 }
+
+
+  export const  InitialAttendanceRecord = {
+    id: 0,
+    uuid: "",
+    recordedById: "",
+    location: LOCATION.RELIGION_GROUND,
+    service: SERVICE.SWS,
+    totalMale: 0,
+    totalFemale: 0,
+    total: 0,
+    attendanceDate: "",
+    createdAt: "",
+    updatedAt: "",
+    breakdowns: [
+      { id: 0, uuid: "", type: "", male: 0, female: 0 }
+    ]
+  };

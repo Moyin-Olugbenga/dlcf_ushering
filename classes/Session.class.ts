@@ -69,9 +69,11 @@ export class Session {
         })
     }
 
-    public static async destroySession() {
+    public static async destroySession(): Promise<string> {
         const cookiesStore = await cookies();
             
         cookiesStore.delete("noisses");
+        return "successfully deleted Cookie"
+        
     }
 }

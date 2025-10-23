@@ -1,4 +1,4 @@
-import { LOCATION } from "@/lib/generated/prisma";
+import { LOCATION, UserType } from "@/lib/generated/prisma";
 
 export type UserSignInData = {
     email: string;
@@ -30,4 +30,12 @@ export type UpdatePasswordData = {
     oldPassword: string;
     newPassword: string;
     confirmNewPassword: string;
+}
+export type EditUserData = {
+    uuid: string;
+    email: string;
+    firstName: string;
+    lastName: string;
+    userType: UserType;
+    location: LOCATION
 }

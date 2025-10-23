@@ -21,35 +21,40 @@ import { Utility } from "@/classes/Utility.class";
 import axios from "axios";
 import { useState } from "react";
 import Image from "next/image";
-import { LOCATION, SERVICE } from "@/lib/generated/prisma/client";
-import { AttendanceData } from "@/app/types/attendance";
+import { AttendanceType, SERVICE } from "@/lib/generated/prisma/client";
+import { AttendanceData, AttendanceRecord } from "@/app/types/attendance";
 import { AttendanceSchema } from "@/app/api/schemaDefinitions/Attendance";
+import { TUser } from "@/app/types/user";
 
-export function EditAttendance() {
+export function EditAttendance(  {
+        user,
+        attendance
+    } : {user:TUser; attendance: AttendanceRecord;} ) {
 
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [error, setErrors] = useState("");
     const [success, setSuccess] = useState("");
-
+    
+console.log(attendance);
     const initialValues : AttendanceData = {
-      recordedById: "",
-      location: LOCATION.RELIGION_GROUND,
-      service: SERVICE.SWS,
-      serviceDate: "",
-      sMale:0,
-      sFemale:0,
-      nsMale:0,
-      nsFemale:0,
-      yMale:0,
-      yFemale:0,
-      chMale:0,
-      chFemale:0,
-      conMale:0,
-      conFemale:0,
-      ncMale:0,
-      ncFemale:0,
-      gMale:0,
-      gFemale:0,
+      recordedById: user.uuid,
+      location: user.location,
+      service: attendance?.service,
+      serviceDate: attendance.attendanceDate,
+      sMale:attendance.breakdowns.find(b => b.type == AttendanceType.STUDENT && b.male >= 0)?.male || 0 ,
+      sFemale:attendance.breakdowns.find(b => b.type == AttendanceType.STUDENT && b.female >= 0)?.female || 0 ,
+      nsMale:attendance.breakdowns.find(b => b.type == AttendanceType.NON_STUDENT && b.male >= 0)?.male || 0 ,
+      nsFemale:attendance.breakdowns.find(b => b.type == AttendanceType.NON_STUDENT && b.female >= 0)?.female || 0 ,
+      yMale:attendance.breakdowns.find(b => b.type == AttendanceType.YOUTH && b.male >= 0)?.male || 0 ,
+      yFemale:attendance.breakdowns.find(b => b.type == AttendanceType.YOUTH && b.female >= 0)?.female || 0 ,
+      chMale:attendance.breakdowns.find(b => b.type == AttendanceType.CHILDREN && b.male >= 0)?.male || 0 ,
+      chFemale:attendance.breakdowns.find(b => b.type == AttendanceType.CHILDREN && b.female >= 0)?.female || 0 ,
+      conMale:attendance.breakdowns.find(b => b.type == AttendanceType.CONVERT && b.male >= 0)?.male || 0 ,
+      conFemale:attendance.breakdowns.find(b => b.type == AttendanceType.CONVERT && b.female >= 0)?.female || 0 ,
+      ncMale:attendance.breakdowns.find(b => b.type == AttendanceType.NEWCOMER && b.male >= 0)?.male || 0 ,
+      ncFemale:attendance.breakdowns.find(b => b.type == AttendanceType.NEWCOMER && b.female >= 0)?.female || 0 ,
+      gMale:attendance.breakdowns.find(b => b.type == AttendanceType.GUEST && b.male >= 0)?.male || 0 ,
+      gFemale:attendance.breakdowns.find(b => b.type == AttendanceType.GUEST && b.female >= 0)?.female || 0 ,
     }
     try {
     return (
@@ -62,12 +67,12 @@ export function EditAttendance() {
             onSubmit={async (values) => {
                 try{
                     setIsSubmitting(true);
-                    const {data} = await axios.post("/api/auth/signUp", {...values});
+                    const {data} = await axios.post("/api/attendance/edit", {...values});
                     if (data.error == true) {
                       setErrors(data.message);
                     } 
                     else {
-                      setSuccess("Account created successfully");
+                      setSuccess("Attendance edited successfully");
                     }
                     setIsSubmitting(false);
                 }catch(error){
@@ -83,7 +88,7 @@ export function EditAttendance() {
         <CardHeader className="text-center">
         <Image src="/dlcfOAU.jpeg" alt="DLCF Logo" width={120} height={120} className="mx-auto mt-4"/>
         <h2 className="text-xl">DLCF OAU</h2>
-          <CardTitle className="text-md">Signup as an usher</CardTitle>
+          <CardTitle className="text-md">Edit Attendance</CardTitle>
           <CardDescription>
               {error && <p>{error}</p>}
            
@@ -92,7 +97,50 @@ export function EditAttendance() {
         <CardContent>
            <form  method="POST" onSubmit={handleSubmit} className="max-w-3xl mx-auto space-y-8 p-6 shadow-md rounded-xl">
              <div className="grid gap-6">
-              {error && <p>{error}</p>}
+              {error && 
+              <p className="error-feedback">
+                <div role="alert" className="rounded-md border border-gray-300 bg-white p-4 shadow-sm">
+                    <div className="flex items-start gap-4">
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        strokeWidth="1.5"
+                        stroke="currentColor"
+                        className="size-6 text-red-600"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                        />
+                      </svg>
+                      <div className="flex-1">
+                        <strong className="font-medium text-gray-900"> Success</strong>
+                        <p className="mt-0.5 text-sm text-gray-700">{error}</p>
+                      </div>
+                      <button
+                        className="-m-3 rounded-full p-1.5 text-gray-500 transition-colors hover:bg-gray-50 hover:text-gray-700"
+                        type="button"
+                        aria-label="Dismiss alert"
+                      >
+                        <span className="sr-only">Dismiss popup</span>
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          fill="none"
+                          viewBox="0 0 24 24"
+                          strokeWidth="1.5"
+                          stroke="currentColor"
+                          className="size-5"
+                        >
+                          <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+                        </svg>
+                      </button>
+                    </div>
+                  </div>
+
+                </p>
+                 } 
               {success && 
               <p className="success-feedback">
                 <div role="alert" className="rounded-md border border-gray-300 bg-white p-4 shadow-sm">
@@ -113,7 +161,7 @@ export function EditAttendance() {
                       </svg>
                       <div className="flex-1">
                         <strong className="font-medium text-gray-900"> Success</strong>
-                        <p className="mt-0.5 text-sm text-gray-700">You can proceed to login now.</p>
+                        <p className="mt-0.5 text-sm text-gray-700">{success}</p>
                       </div>
                       <button
                         className="-m-3 rounded-full p-1.5 text-gray-500 transition-colors hover:bg-gray-50 hover:text-gray-700"
@@ -247,7 +295,7 @@ export function EditAttendance() {
               </div>
               <div  className="flex-col gap-1"> 
                 <Button variant="outline" type="submit" disabled={isSubmitting} style={{ marginTop: '1.5rem' }}>
-                  {isSubmitting ? 'Submitting...' : 'Submit Attendance'}
+                  {isSubmitting ? 'Editing...' : 'Edit Attendance'}
                 </Button>
               </div>
               </div>

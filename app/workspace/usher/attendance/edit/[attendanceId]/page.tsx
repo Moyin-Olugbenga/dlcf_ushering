@@ -1,17 +1,23 @@
 "use client";
 import { AppSidebar } from "@/components/app-sidebar"
-import { CreateAttendance } from "@/components/CreateAttendance";
+import { EditAttendance } from "@/components/EditAttendance";
 import { SiteHeader } from "@/components/site-header"
 import {
   SidebarInset,
   SidebarProvider,
 } from "@/components/ui/sidebar"
+import { AttendanceStore, useAttendance } from "@/Store/Attendance";
 import { useUser, UserStore } from "@/Store/User"
+import { useParams} from "next/navigation";
 import { useEffect, useRef } from "react";
 
 
 export default function AttendancePage() {
+    const params = useParams();
+  const id = params.attendanceId as string;
+  console.log(id)
   const { data : user, fetchingUser } = useUser(); 
+  const { data : attendance, fetchingAttendance } = useAttendance(); 
 
     const hasFetched = useRef(false);
 
@@ -19,18 +25,13 @@ export default function AttendancePage() {
     if (!hasFetched.current) {
         hasFetched.current = true;
         UserStore.fetchUserData();
+        AttendanceStore.fetchAttendanceData(id);
     }
-    }, []);
+    }, [id]);
+    
     
 
-//   useEffect(() => {
-//     // Only fetch if we don’t already have user data
-//     if (!data.uuid) {
-//       UserStore.fetchUserData();
-//     }
-//   }, [data.uuid]);
-
-  if (fetchingUser) return <p>Loading user...</p>;
+  if (fetchingUser || fetchingAttendance) return <p>Loading...</p>;
 
 
   return (
@@ -42,35 +43,29 @@ export default function AttendancePage() {
         } as React.CSSProperties
       }
     >
-      <AppSidebar user={user} variant="inset"/>
+        {
+        fetchingUser ? (
+            <div className='mx-4 my-10'>
+            <div className=""></div>
+            </div>
+        ) : (
+            <>
+            <AppSidebar user={user} variant="inset" />
+        
       <SidebarInset>
         <SiteHeader />
           <div className="flex flex-1 flex-col">
             <div className="@container/main flex flex-1 flex-col gap-2">
               <div className="flex flex-col gap-4 py-4 md:gap-6 md:py-6">
-                <div className="px-4 lg:px-6">
-                  {
-                    fetchingUser ? (
-                      <div className='mx-4 my-10'>
-                        <div className=""></div>
-                      </div>
-                    ) :  <CreateAttendance user={user} />
-                      }
+                <div className="px-4 lg:px-6">  <EditAttendance user={user} attendance={attendance} />
+                      
                  
                 </div>
               </div>
             </div>
           </div>
-        <div className="flex flex-1 flex-col">
-          <div className="@container/main flex flex-1 flex-col gap-2">
-            <div className="flex flex-col gap-4 py-4 md:gap-6 md:py-6">
-
-              {/* <SectionCards /> */}
-              
-            </div>
-          </div>
-        </div>
       </SidebarInset>
+    </>)}
     </SidebarProvider>
   )
 }

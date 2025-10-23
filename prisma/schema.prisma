@@ -86,7 +86,7 @@ model User {
   password                          String                          
   firstName                         String                          
   lastName                          String    
-  usertype                          UserType                        @default(USHER)
+  userType                          UserType                        @default(USHER)
   location                          LOCATION                          
 
   attendances                      Attendance[]
@@ -124,7 +124,7 @@ model AttendanceBreakdown {
   
   attendanceId                      String
   type                              AttendanceType
-  attendance                        Attendance                      @relation(fields: [attendanceId], references: [uuid])
+  attendance                        Attendance                      @relation(fields: [attendanceId], references: [uuid], onDelete: Cascade)
 
   male                              Int
   female                            Int

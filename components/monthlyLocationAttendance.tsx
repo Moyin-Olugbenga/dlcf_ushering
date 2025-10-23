@@ -1,7 +1,7 @@
 "use client";
 import { useEffect, useState } from "react";
 import { TUser } from "@/app/types/user";
-import { AttendanceRecord } from "@/app/types/attendance";
+import { AttendanceRecord, InitialAttendanceRecord } from "@/app/types/attendance";
 import { Button } from "@/components/ui/button"
 import {
   Dialog,
@@ -23,22 +23,6 @@ export default function MonthlyLocationAttendance ({
     user: TUser
 }) {
 
-  const  InitialAttendanceRecord = {
-    id: 0,
-    uuid: "",
-    recordedById: "",
-    location: "",
-    service: "",
-    totalMale: 0,
-    totalFemale: 0,
-    total: 0,
-    attendanceDate: "",
-    createdAt: "",
-    updatedAt: "",
-    breakdowns: [
-      { id: 0, type: "", male: 0, female:0}
-    ]
-  };
   const [month, setMonth] = useState<string>(() => {
     const today = new Date();
     return `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, "0")}`;
@@ -57,8 +41,6 @@ export default function MonthlyLocationAttendance ({
       .then((res) => res.json())
       .then((res) => setData(res.data));
   }, [month, user.location]);
-
-  console.log(data)
 
   return (
     <div className="space-y-8 p-6">
