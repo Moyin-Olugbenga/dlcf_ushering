@@ -11,6 +11,7 @@ import { useUser } from "@/Store/User";
 
 export default function Page() {
   const { data : user, fetchingUser } = useUser();
+  if (fetchingUser) return <p>Loading user...</p>;
   return (
     <SidebarProvider
       style={
@@ -19,13 +20,7 @@ export default function Page() {
           "--header-height": "calc(var(--spacing) * 12)",
         } as React.CSSProperties
       }
-    >{
-      fetchingUser ? (
-        <div className='mx-4 my-10'>
-          <div className=""></div>
-        </div>
-      ) : (
-        <>
+    >
       <AppSidebar user={user} variant="inset" />
       <SidebarInset>
         <SiteHeader />
@@ -38,7 +33,6 @@ export default function Page() {
           </div>
         </div>
       </SidebarInset>
-      </> ) }
     </SidebarProvider>
   )
 }
