@@ -6,6 +6,7 @@ export const POST = async(req: NextRequest, context: { params: Promise<{ locatio
 ) => {
     const { month } = await req.json();
         const {location} = await context.params; 
+        console.log("Location param:", location);
     if (!month || !location) {
       return NextResponse.json({ error: "Month required" }, { status: 400 });
     }
@@ -16,12 +17,14 @@ export const POST = async(req: NextRequest, context: { params: Promise<{ locatio
 
     try{
     const locationParam = location.toUpperCase() as keyof typeof LOCATION;
+        console.log("Location param:", locationParam);
 
     if (!(locationParam in LOCATION)) {
       return NextResponse.json({ error: "Invalid location" }, { status: 400 });
     }
 
     const locationValue = LOCATION[locationParam];
+        console.log("Location Value:", locationValue);
 
         const records = await database.attendance.findMany({
             where:{
