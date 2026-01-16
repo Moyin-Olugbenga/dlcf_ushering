@@ -11,6 +11,9 @@ import { useUser } from "@/Store/User";
 
 export default function Page() {
   const { data : user, fetchingUser } = useUser();
+  
+  if (fetchingUser) return <p>Loading user...</p>;
+
   return (
     <SidebarProvider
       style={
@@ -20,14 +23,8 @@ export default function Page() {
         } as React.CSSProperties
       }
     >
-        {
-        fetchingUser ? (
-            <div className='mx-4 my-10'>
-            <div className=""></div>
-            </div>
-        ) : (
-            <>
-            <AppSidebar user={user} variant="inset" />
+        
+      <AppSidebar user={user} variant="inset" />
       <SidebarInset>
         <SiteHeader />
         <div className="flex flex-1 flex-col">
@@ -39,7 +36,6 @@ export default function Page() {
           </div>
         </div>
       </SidebarInset>
-      </> ) }
     </SidebarProvider>
   )
 }

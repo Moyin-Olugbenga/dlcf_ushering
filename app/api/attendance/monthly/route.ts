@@ -8,6 +8,7 @@ export async function GET() {
       include: {
         breakdowns: true,
       },
+      
     });
 
     const monthly: Record<

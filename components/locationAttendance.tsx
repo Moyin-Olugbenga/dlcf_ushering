@@ -49,22 +49,22 @@ const router = useRouter();
             <th className="border border-gray-300" rowSpan={2} colSpan={2} align="center">Actions</th>
             </tr>
             <tr className=" text-sm ">
-            <th className="border border-gray-300">Male</th>
-            <th className="border border-gray-300">Female</th>
-            <th className="border border-gray-300">Male</th>
-            <th className="border border-gray-300">Female</th>
-            <th className="border border-gray-300">Male</th>
-            <th className="border border-gray-300">Female</th>
-            <th className="border border-gray-300">Male</th>
-            <th className="border border-gray-300">Female</th>
-            <th className="border border-gray-300">Male</th>
-            <th className="border border-gray-300">Female</th>
-            <th className="border border-gray-300">Male</th>
-            <th className="border border-gray-300">Female</th>
-            <th className="border border-gray-300">Male</th>
-            <th className="border border-gray-300">Female</th>
-            <th className="border border-gray-300">Male</th>
-            <th className="border border-gray-300">Female</th>
+            <th className="border border-gray-300">M</th>
+            <th className="border border-gray-300">F</th>
+            <th className="border border-gray-300">M</th>
+            <th className="border border-gray-300">F</th>
+            <th className="border border-gray-300">M</th>
+            <th className="border border-gray-300">F</th>
+            <th className="border border-gray-300">M</th>
+            <th className="border border-gray-300">F</th>
+            <th className="border border-gray-300">M</th>
+            <th className="border border-gray-300">F</th>
+            <th className="border border-gray-300">M</th>
+            <th className="border border-gray-300">F</th>
+            <th className="border border-gray-300">M</th>
+            <th className="border border-gray-300">F</th>
+            <th className="border border-gray-300">M</th>
+            <th className="border border-gray-300">F</th>
             </tr>
         {data.map((record) => (
           <tr key={record.uuid} className="text-center">
