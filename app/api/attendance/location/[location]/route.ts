@@ -27,13 +27,16 @@ export const POST = async(req: NextRequest, context: { params: Promise<{ locatio
             where:{
                 location: locationValue,
                 attendanceDate: {
-                gte: startDate,
-                lt: endDate,
-            },
+                    gte: startDate,
+                    lt: endDate,
+                },
             },
             include: {
                 breakdowns: true,
-            }
+            },
+            orderBy: {
+                attendanceDate: 'asc',
+            },
         });
 
         return NextResponse.json({ message: "Attendance gotten Successfully.", data: records }, { status: 200 })
