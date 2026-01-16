@@ -110,6 +110,7 @@ model Attendance {
   totalMale                         Int
   totalFemale                       Int
   total                             Int 
+  growth                            Float? 
   attendanceDate                    DateTime
 
   createdAt                         DateTime                        @default(now())
