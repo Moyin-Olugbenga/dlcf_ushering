@@ -34,6 +34,7 @@ export function CreateAttendance({
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [error, setErrors] = useState("");
     const [success, setSuccess] = useState("");
+    console.log({user});
 
     const initialValues : AttendanceData = {
       recordedById: user.uuid as string,
