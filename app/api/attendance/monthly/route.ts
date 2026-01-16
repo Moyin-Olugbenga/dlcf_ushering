@@ -7,6 +7,9 @@ export async function GET() {
     const data = await database.attendance.findMany({
       include: {
         breakdowns: true,
+      }, 
+      orderBy: {
+        attendanceDate: 'asc',
       },
     });
 
