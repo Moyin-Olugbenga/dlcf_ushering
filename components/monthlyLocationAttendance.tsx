@@ -28,7 +28,7 @@ export default function MonthlyLocationAttendance ({
     return `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, "0")}`;
   });
   const [data, setData] = useState<AttendanceRecord[]>([InitialAttendanceRecord]);
-  console.log(`("User location in MonthlyLocationAttendance:", user.location);`);
+  console.log("User location in MonthlyLocationAttendance:", user.location);
 
   // const COLORS = ["#1E3A8A", "#EF4444", "#3B82F6", "#DC2626", "#7C3AED", "#F59E0B"];
 
