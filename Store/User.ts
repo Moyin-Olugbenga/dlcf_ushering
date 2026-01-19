@@ -65,7 +65,7 @@ const fetchUserData = async () : Promise<TUser> => {
     updateUser("fetchingUser", true);
     try {
         const { data } = await axios.get("/api/user");
-        // console.log("Store:data.user", data.user);
+        console.log("Store:data.user", data.user);
         updateUser("data", data.user);
         return data.user;
     } catch (error: unknown) {
