@@ -11,6 +11,7 @@ import { useUser } from "@/Store/User"
 
 export default function AttendancePage() {
   const { data : user, fetchingUser } = useUser();
+  console.log("User in AttendancePage:", user);
 
   return (
     <SidebarProvider
