@@ -31,7 +31,6 @@ export default function AttendancePage() {
 //   }, [data.uuid]);
 
   if (fetchingUser) return <p>Loading user...</p>;
-  console.log("User in AttendancePage:", user);
 
   return (
     <SidebarProvider

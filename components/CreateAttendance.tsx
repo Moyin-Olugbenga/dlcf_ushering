@@ -88,7 +88,7 @@ export function CreateAttendance({
         <CardHeader className="text-center">
         <Image src="/dlcfOAU.jpeg" alt="DLCF Logo" width={120} height={120} className="mx-auto mt-4"/>
         <h2 className="text-xl">DLCF OAU</h2>
-        <h3>Attendance for ${user.location}</h3>
+        <h3>Attendance for {user.location}</h3>
           <CardDescription>
               {error && <p>{error}</p>}
            

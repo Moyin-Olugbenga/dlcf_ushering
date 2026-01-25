@@ -13,6 +13,7 @@ import {
 import AttendanceTable from "./locationAttendance";
 import { LOCATION } from "@/lib/generated/prisma";
 import { Label } from "./ui/label";
+import { set } from "zod";
 
 
 export default function MonthlyLocationAttendance ({
@@ -26,7 +27,8 @@ export default function MonthlyLocationAttendance ({
     return `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, "0")}`;
   });
   const [data, setData] = useState<AttendanceRecord[]>([InitialAttendanceRecord]);
-  const [location, setLocation] = useState('')
+  const [location, setLocation] = useState(LOCATION.RELIGION_GROUND);
+  const [loading, setLoading] = useState(false);
 
 
       // const handleChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
@@ -36,14 +38,17 @@ export default function MonthlyLocationAttendance ({
       // };
   // Fetch attendance when month and location changes
   useEffect(() => {
-    if (!month && location) return;
+    if (!month || !location) return;
+    setLoading(true);
     fetch(`/api/attendance/location/${location}`, {
       method: "POST",
       body: JSON.stringify({ month }),
     })
-      .then((res) => res.json())
-      .then((res) => setData(res.data));
-  }, [month, location]);
+    .then((res) => res.json())
+    .then((res) => setData(res.data))
+    .catch((error) => console.error("Error fetching attendance:", error))
+    .finally(() => setLoading(false));
+}, [month, location]);
 
   return (
     <div className="space-y-8 p-6">

@@ -6,11 +6,22 @@ import {
   SidebarInset,
   SidebarProvider,
 } from "@/components/ui/sidebar"
-import { useUser } from "@/Store/User";
+import { useUser, UserStore } from "@/Store/User"
+import { useEffect, useRef } from "react";
 
 
 export default function Page() {
-  const { data : user, fetchingUser } = useUser();
+  const { data : user, fetchingUser } = useUser(); 
+
+    const hasFetched = useRef(false);
+
+    useEffect(() => {
+    if (!hasFetched.current) {
+        hasFetched.current = true;
+        UserStore.fetchUserData();
+    }
+    }, []);
+  if (fetchingUser) return <p>Loading user...</p>;
   return (
     <SidebarProvider
       style={
