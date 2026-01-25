@@ -6,11 +6,31 @@ import {
   SidebarInset,
   SidebarProvider,
 } from "@/components/ui/sidebar"
-import { useUser } from "@/Store/User"
+import { useUser, UserStore } from "@/Store/User"
+import { useEffect, useRef } from "react";
 
 
 export default function AttendancePage() {
-  const { data : user, fetchingUser } = useUser();
+  const { data : user, fetchingUser } = useUser(); 
+
+    const hasFetched = useRef(false);
+
+    useEffect(() => {
+    if (!hasFetched.current) {
+        hasFetched.current = true;
+        UserStore.fetchUserData();
+    }
+    }, []);
+    
+
+//   useEffect(() => {
+//     // Only fetch if we don’t already have user data
+//     if (!data.uuid) {
+//       UserStore.fetchUserData();
+//     }
+//   }, [data.uuid]);
+
+  if (fetchingUser) return <p>Loading user...</p>;
   console.log("User in AttendancePage:", user);
 
   return (
