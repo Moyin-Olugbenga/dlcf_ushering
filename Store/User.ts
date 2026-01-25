@@ -45,10 +45,7 @@ export const useUsers = () => {
 
 const updateUser = <K extends keyof UserStore>(key: K, value: UserStore[K]) => {
     userStore.update(store => {
-        return {
-            ...store,
-            [key] : value
-        }
+        store[key] = value;
     })
 }
 
@@ -65,8 +62,9 @@ const fetchUserData = async () : Promise<TUser> => {
     updateUser("fetchingUser", true);
     try {
         const { data } = await axios.get("/api/user");
-        // console.log("Store:data.user", data.user);
+        console.log("Store:data.user", data.user);
         updateUser("data", data.user);
+    console.log("Store after update:", userStore.getRawState()); // Check store state
         return data.user;
     } catch (error: unknown) {
         if (axios.isAxiosError(error)) {
@@ -99,6 +97,18 @@ const fetchUsers = async () : Promise<TUser[]> => {
     }
 }
 
+// const fetchUsers = async () : Promise<TUser[]> => {
+//   updateUsers("fetchingUsers", true);
+//   try {
+//     const { data } = await axios.get("/api/users");
+//     updateUsers("data", data.users); // Changed from data.user to data.users
+//     return data.users; // Also changed here
+//   } catch (error: unknown) {
+//     // ... error handling
+//   } finally {
+//     updateUsers("fetchingUsers", false);
+//   }
+// }
 
 export const UserStore = {
     updateUser,

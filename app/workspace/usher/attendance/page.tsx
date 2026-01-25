@@ -22,13 +22,13 @@ export default function AttendancePage() {
         } as React.CSSProperties
       }
     >
-                  {
-                    fetchingUser ? (
-                      <div className='mx-4 my-10'>
-                        <div className=""></div>
-                      </div>
-                    ) : (
-                      <>
+      {
+        fetchingUser ? (
+          <div className='mx-4 my-10'>
+            <div className=""></div>
+          </div>
+        ) : (
+          <>
       <AppSidebar user={user} variant="inset" />
       <SidebarInset>
         <SiteHeader />
