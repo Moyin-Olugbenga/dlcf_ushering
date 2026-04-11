@@ -59,6 +59,11 @@ const data = {
       url: "/workspace/admin/attendance/location",
       icon: IconDatabase,
     },
+    {
+      name: "All users",
+      url: "/workspace/admin/roles/",
+      icon: IconDatabase,
+    },
   ],
 }
 
