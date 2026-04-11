@@ -30,13 +30,6 @@ export default function MonthlyLocationAttendance ({
   const [location, setLocation] = useState(LOCATION.RELIGION_GROUND);
   const [loading, setLoading] = useState(false);
 
-
-      // const handleChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
-      //   setLocation(event.target.value);
-      //   // You can perform other actions here based on the new value
-      //   console.log('Selected value:', event.target.value);
-      // };
-  // Fetch attendance when month and location changes
   useEffect(() => {
     if (!month || !location) return;
     setLoading(true);

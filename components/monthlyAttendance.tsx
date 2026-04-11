@@ -1,222 +1,174 @@
 "use client";
-import { useEffect, useState, useRef } from "react";
-import { 
-  BarChart, Bar, LineChart, Line, PieChart, Pie, Cell, 
-  XAxis, YAxis, Tooltip, Legend, ResponsiveContainer 
-} from "recharts";
-import jsPDF from "jspdf";
-import { toPng } from "html-to-image";
-// import { LOCATION } from "@/lib/generated/prisma";
-import { AttendanceField } from "@/app/types/attendance";
+import { useEffect, useState, useMemo } from "react";
+import { TUser } from "@/app/types/user";
+import { AttendanceRecord, InitialAttendanceRecord } from "@/app/types/attendance";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { SERVICE } from "@/lib/generated/prisma";
+import { Label } from "./ui/label";
+import TotalAttendanceTable from "./TotalAttendance";
 
-
-export default function MonthlyAttendance() {
-  const reportRef = useRef<HTMLDivElement>(null);
+export default function MonthlyLocationAttendance({ user }: { user: TUser }) {
   const [month, setMonth] = useState<string>(() => {
-    // default: current month
     const today = new Date();
     return `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, "0")}`;
   });
-  const [data, setData] = useState<unknown>(null);
-  const COLORS = ["#1E3A8A", "#EF4444", "#3B82F6", "#DC2626", "#7C3AED", "#F59E0B"];
 
-  // Fetch attendance when month changes
-  useEffect(() => {
-    if (!month) return;
-    fetch("/api/month", {
-      method: "POST",
-      body: JSON.stringify({ month }),
-    })
-      .then((res) => res.json())
-      .then((res) => setData(res.data));
-  }, [month]);
+  const [rawMonthlyData, setRawMonthlyData] = useState<AttendanceRecord[]>([]);
+  const [selectedServiceType, setSelectedServiceType] = useState<string>("");
+  const [selectedDateKey, setSelectedDateKey] = useState<string>("");
+  const [loading, setLoading] = useState(false);
 
-  const handleDownloadPDF = async () => {
-    if (!reportRef.current) return;
+  // 1. Get unique Service Types available this month (e.g. SWS, MBS)
+  const availableServiceTypes = useMemo(() => {
+    const types = rawMonthlyData.map((r) => r.service);
+    return Array.from(new Set(types)) as SERVICE[];
+  }, [rawMonthlyData]);
 
- try {
-      const imgData = await toPng(reportRef.current, { cacheBust: true });
-
-      // Init PDF
-      const pdf = new jsPDF("p", "mm", "a4");
-      const pdfWidth = pdf.internal.pageSize.getWidth();
-      const pdfHeight = pdf.internal.pageSize.getHeight();
-
-      const imgProps = pdf.getImageProperties(imgData);
-      const imgHeight = (imgProps.height * pdfWidth) / imgProps.width;
-
-      let heightLeft = imgHeight;
-      let position = 0;
-
-      // First page
-      pdf.addImage(imgData, "PNG", 0, position, pdfWidth, imgHeight);
-      heightLeft -= pdfHeight;
-
-      // Add extra pages if needed
-      while (heightLeft > 0) {
-        position -= pdfHeight;
-        pdf.addPage();
-        pdf.addImage(imgData, "PNG", 0, position, pdfWidth, imgHeight);
-        heightLeft -= pdfHeight;
+  // 2. Get unique Dates for the selected Service Type
+  // We use the ISO string as a key because multiple locations share the exact same date/time.
+  const availableDates = useMemo(() => {
+    const filteredByService = rawMonthlyData.filter(r => r.service === selectedServiceType);
+    
+    // Group by date to remove location-based duplicates
+    const uniqueDatesMap = new Map();
+    filteredByService.forEach(record => {
+      const dateString = new Date(record.attendanceDate).toDateString();
+      if (!uniqueDatesMap.has(dateString)) {
+        uniqueDatesMap.set(dateString, record.attendanceDate);
       }
+    });
 
-        pdf.save(`attendance-report-${month}.pdf`);
-    } catch (error) {
-      console.error("PDF generation failed:", error);
-    }
-  };
+    return Array.from(uniqueDatesMap.entries()).map(([label, value]) => ({
+      label,
+      value
+    }));
+  }, [selectedServiceType, rawMonthlyData]);
 
-  if (!data) return <p className="p-6">Loading...</p>;
+  // 3. Filter data for the Table: Show ALL locations for the chosen Type + Date
+  const filteredTableData = useMemo(() => {
+    if (!selectedServiceType || !selectedDateKey) return [];
+    
+    return rawMonthlyData.filter((r) => {
+      const isSameType = r.service === selectedServiceType;
+      const isSameDate = r.attendanceDate === selectedDateKey;
+      return isSameType && isSameDate;
+    });
+  }, [selectedServiceType, selectedDateKey, rawMonthlyData]);
+  useEffect(() => {
+      // 1. Guard clause: Don't fetch if month isn't selected
+      if (!month) return;
 
-  // const obj: { [key: string]: unknown } = {};
-  const dataObj = data as Record<
-  string,
-  {
-    NONSTUDENT_MALE?: number;
-    NONSTUDENT_FEMALE?: number;
-    STUDENT_MALE?: number;
-    STUDENT_FEMALE?: number;
-    YOUTH_MALE?: number;
-    YOUTH_FEMALE?: number;
-    CHILDREN_MALE?: number;
-    CHILDREN_FEMALE?: number;
-    GUEST_MALE?: number;
-    GUEST_FEMALE?: number;
-    NEWCOMER_MALE?: number;
-    NEWCOMER_FEMALE?: number;
-    CONVERT_MALE?: number;
-    CONVERT_FEMALE?: number;
-    TOTAL?: number;
-  }
->;
+      const fetchMonthlyData = async () => {
+        setLoading(true);
+        try {
+          // 2. We use POST to match your original API implementation
+          const response = await fetch("/api/month/services", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ month }),
+          });
 
-const locations = Object.keys(dataObj);
+          if (!response.ok) {
+            throw new Error(`Failed to fetch: ${response.statusText}`);
+          }
 
-  // Transform data for charts
-  const chartData = locations.map((loc: string) => ({
-    location: loc,
-    NonStudents: (dataObj[loc].NONSTUDENT_MALE || 0) + (dataObj[loc].NONSTUDENT_FEMALE || 0),
-    Students: (dataObj[loc].STUDENT_MALE || 0) + (dataObj[loc].STUDENT_FEMALE || 0),
-    Youth: (dataObj[loc].YOUTH_MALE || 0) + (dataObj[loc].YOUTH_FEMALE || 0),
-    Children: (dataObj[loc].CHILDREN_MALE || 0) + (dataObj[loc].CHILDREN_FEMALE || 0),
-    Guests: (dataObj[loc].GUEST_MALE || 0) + (dataObj[loc].GUEST_FEMALE || 0),
-    Newcomers: (dataObj[loc].NEWCOMER_MALE || 0) + (dataObj[loc].NEWCOMER_FEMALE || 0),
-    Converts: (dataObj[loc].CONVERT_MALE || 0) + (dataObj[loc].CONVERT_FEMALE || 0),
-    Total: dataObj[loc].TOTAL || 0,
-  }));
+          const result = await response.json();
 
-  const pieData = [
-    { name: "NonStudents", value: chartData.reduce((a, b) => a + b.NonStudents, 0) },
-    { name: "Students", value: chartData.reduce((a, b) => a + b.Students, 0) },
-    { name: "Youth", value: chartData.reduce((a, b) => a + b.Youth, 0) },
-    { name: "Children", value: chartData.reduce((a, b) => a + b.Children, 0) },
-    { name: "Guests", value: chartData.reduce((a, b) => a + b.Guests, 0) },
-    { name: "Newcomers", value: chartData.reduce((a, b) => a + b.Newcomers, 0) },
-    { name: "Converts", value: chartData.reduce((a, b) => a + b.Converts, 0) },
-  ];
+          // 3. Update states
+          // result.data will now be the raw array of Attendance records
+          setRawMonthlyData(result.data || []);
+          
+          // 4. Reset selections so the user has to pick fresh for the new month
+          setSelectedServiceType(""); 
+          setSelectedDateKey("");
+
+        } catch (error) {
+          console.error("Error fetching monthly attendance:", error);
+        } finally {
+          setLoading(false);
+        }
+      };
+
+      fetchMonthlyData();
+    }, [month]);
 
   return (
     <div className="space-y-8 p-6">
-      {/* Month picker + Download button */}
-      <div className="flex items-center gap-4">
-        <input
-          type="month"
-          value={month}
-          onChange={(e) => setMonth(e.target.value)}
-          className="border rounded px-3 py-2"
-        />
-        <button
-          onClick={handleDownloadPDF}
-          className="px-4 py-2 bg-red-600 text-white rounded shadow hover:bg-red-700"
-        >
-          Download PDF
-        </button>
+      <div className="flex flex-wrap items-end gap-6 bg-slate-50 p-4 rounded-xl border">
+        <div className="flex flex-col gap-2">
+          <Label className="font-bold">1. Select Month</Label>
+          <input
+            type="month"
+            value={month}
+            onChange={(e) => setMonth(e.target.value)}
+            className="border rounded px-3 py-2 h-10 bg-white"
+          />
+        </div>
+
+        <div className="flex flex-col gap-2">
+          <Label className="font-bold">2. Service Type</Label>
+          <Select
+            value={selectedServiceType}
+            onValueChange={(val) => {
+              setSelectedServiceType(val);
+              setSelectedDateKey("");
+            }}
+          >
+            <SelectTrigger className="w-[200px] bg-white">
+              <SelectValue placeholder="Select Service" />
+            </SelectTrigger>
+            <SelectContent>
+              {availableServiceTypes.map((type) => (
+                <SelectItem key={type} value={type}>{type}</SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
+
+        <div className="flex flex-col gap-2">
+          <Label className="font-bold">3. Select Date</Label>
+          <Select
+            value={selectedDateKey}
+            onValueChange={setSelectedDateKey}
+            disabled={!selectedServiceType}
+          >
+            <SelectTrigger className="w-[240px] bg-white">
+              <SelectValue placeholder="Pick the specific date" />
+            </SelectTrigger>
+            <SelectContent>
+              {availableDates.map((item) => (
+                <SelectItem key={item.value} value={item.value}>
+                  {item.label}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
       </div>
 
-      {/* Report container */}
-      <div ref={reportRef} className="bg-white p-6 rounded-xl shadow space-y-8">
-        <div className="overflow-x-auto border rounded-lg shadow">
-  <table className="min-w-full text-sm text-left text-black">
-    <thead className="bg-gray-100">
-      <tr>
-        <th className="px-4 py-2">Category</th>
-        {locations.map((loc) => (
-          <th key={loc} className="px-4 py-2">{loc}</th>
-        ))}
-      </tr>
-    </thead>
-    <tbody className="text-black">
-      {( [
-    "NONSTUDENT_MALE", "NONSTUDENT_FEMALE",
-    "STUDENT_MALE", "STUDENT_FEMALE",
-    "YOUTH_MALE", "YOUTH_FEMALE",
-    "CHILDREN_MALE", "CHILDREN_FEMALE",
-    "GUEST_MALE", "GUEST_FEMALE",
-    "NEWCOMER_MALE", "NEWCOMER_FEMALE",
-    "CONVERT_MALE", "CONVERT_FEMALE",
-    "TOTAL",
-  ] as AttendanceField[]).map((row) => (
-        <tr key={row} className="border-t">
-          <td className="px-4 py-2 font-medium">
-            {row.replace(/_/g, " ")}
-          </td>
-          {locations.map((loc) => (
-            <td key={loc} className="px-4 py-2 text-center">
-              {dataObj[loc][row] ?? 0}
-            </td>
-          ))}
-        </tr>
-      ))}
-    </tbody>
-  </table>
-</div>
-
-        {/* Bar Chart */}
-        <div className="h-80">
-          <ResponsiveContainer width="100%" height="100%">
-            <BarChart data={chartData}>
-              <XAxis dataKey="location" />
-              <YAxis />
-              <Tooltip />
-              <Legend />
-              <Bar dataKey="NonStudents" fill="#1E3A8A" />
-              <Bar dataKey="Students" fill="#3B82F6" />
-              <Bar dataKey="Youth" fill="#EF4444" />
-              <Bar dataKey="Children" fill="#DC2626" />
-              <Bar dataKey="Guests" fill="#7C3AED" />
-              <Bar dataKey="Newcomers" fill="#F59E0B" />
-              <Bar dataKey="Converts" fill="#22C55E" />
-            </BarChart>
-          </ResponsiveContainer>
-        </div>
-
-        {/* Line Chart */}
-        <div className="h-80">
-          <ResponsiveContainer width="100%" height="100%">
-            <LineChart data={chartData}>
-              <XAxis dataKey="location" />
-              <YAxis />
-              <Tooltip />
-              <Legend />
-              <Line type="monotone" dataKey="Total" stroke="#EF4444" strokeWidth={2} />
-            </LineChart>
-          </ResponsiveContainer>
-        </div>
-
-        {/* Pie Chart */}
-        <div className="h-80">
-          <ResponsiveContainer width="100%" height="100%">
-            <PieChart>
-              <Pie data={pieData} dataKey="value" nameKey="name" outerRadius={120} label>
-                {pieData.map((_, idx) => (
-                  <Cell key={idx} fill={COLORS[idx % COLORS.length]} />
-                ))}
-              </Pie>
-              <Tooltip />
-              <Legend />
-            </PieChart>
-          </ResponsiveContainer>
-        </div>
+      <div className="py-4">
+        {loading ? (
+          <div className="text-center py-10 animate-pulse">Loading Attendance Records...</div>
+        ) : filteredTableData.length > 0 ? (
+          <div className="space-y-6">
+             
+             <div className="overflow-x-auto border rounded-xl shadow-lg bg-white">
+               <TotalAttendanceTable data={filteredTableData} />
+             </div>
+          </div>
+        ) : (
+          <div className="text-center py-20 text-gray-400 border-2 border-dashed rounded-xl bg-gray-50">
+            {selectedServiceType ? "Select a date to view all location records" : "Select a month and service type to begin"}
+          </div>
+        )}
       </div>
     </div>
   );
