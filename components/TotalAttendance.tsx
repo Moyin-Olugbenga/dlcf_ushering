@@ -85,7 +85,12 @@ const TotalAttendanceTable: React.FC<AttendanceTableProps> = ({ data }) => {
 
     doc.save(`${currentService}_${currentDate}.pdf`);
   };
-
+// Combine STUDENT and NON_STUDENT into a single "ADULT" value 
+    const getAdultVal = (loc: string, gender: "male" | "female") => {
+        const students = getVal(loc, "STUDENT", gender);
+        const nonStudents = getVal(loc, "NON_STUDENT", gender);
+        return students + nonStudents;
+    };
   return (
     <div className="flex flex-col items-center w-full space-y-6 p-4">
       <div className="flex justify-end w-full max-w-7xl">
@@ -117,12 +122,20 @@ const TotalAttendanceTable: React.FC<AttendanceTableProps> = ({ data }) => {
           </thead>
           <tbody>
             <tr>
-              <td className="border border-black p-2 font-semibold sticky left-0 bg-white">ADULT (MALE)</td>
-              {data.map((r) => <td key={r.uuid} className="border border-black p-2 text-center">{getVal(r.location, "NON_STUDENT", "male")}</td>)}
-            </tr>
-            <tr>
-              <td className="border border-black p-2 font-semibold sticky left-0 bg-white">ADULT (FEMALE)</td>
-              {data.map((r) => <td key={r.uuid} className="border border-black p-2 text-center">{getVal(r.location, "NON_STUDENT", "female")}</td>)}
+                <td className="border border-black p-2 font-semibold sticky left-0 bg-white">ADULT (MALE)</td>
+                {data.map((r) => (
+                    <td key={r.uuid} className="border border-black p-2 text-center">
+                    {getAdultVal(r.location, "male")} 
+                    </td>
+                ))}
+                </tr>
+                <tr>
+                <td className="border border-black p-2 font-semibold sticky left-0 bg-white">ADULT (FEMALE)</td>
+                {data.map((r) => (
+                    <td key={r.uuid} className="border border-black p-2 text-center">
+                    {getAdultVal(r.location, "female")}
+                    </td>
+                ))}
             </tr>
             <tr>
               <td className="border border-black p-2 font-semibold text-blue-800 sticky left-0 bg-white">YOUTH (BOYS)</td>
