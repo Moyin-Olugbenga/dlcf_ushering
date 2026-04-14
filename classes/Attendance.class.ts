@@ -17,29 +17,29 @@ export class Attendance {
         const totalFemale = data.chFemale + data.nsFemale + data.sFemale + data.yFemale;
         const attendanceDate = new Date(data.serviceDate);
 
-        const SERVICE_DAYS: Record<SERVICE, string> = {
-            [SERVICE.MBS]: "Monday",
-            [SERVICE.SWS]: "Sunday",
-            [SERVICE.TRH]: "Thursday",
-            [SERVICE.SWM]: "Saturday",
-            [SERVICE.GCK_DAY1]: "Thursday",
-            [SERVICE.GCK_DAY2]: "Friday",
-            [SERVICE.IMPACT]: "Saturday",
-            [SERVICE.GCK_DAY3]: "Saturday",
-            [SERVICE.GCK_DAY4]: "Sunday",
-            [SERVICE.GCK_DAY5]: "Monday",
-            [SERVICE.GCK_DAY6]: "Tuesday",
-        };
+        // const SERVICE_DAYS: Record<SERVICE, string> = {
+        //     [SERVICE.MBS]: "Monday",
+        //     [SERVICE.SWS]: "Sunday",
+        //     [SERVICE.TRH]: "Thursday",
+        //     [SERVICE.SWM]: "Saturday",
+        //     [SERVICE.GCK_DAY1]: "Thursday" || "",
+        //     [SERVICE.GCK_DAY2]: "Friday",
+        //     [SERVICE.IMPACT]: "Saturday",
+        //     [SERVICE.GCK_DAY3]: "Saturday",
+        //     [SERVICE.GCK_DAY4]: "Sunday",
+        //     [SERVICE.GCK_DAY5]: "Monday",
+        //     [SERVICE.GCK_DAY6]: "Tuesday",
+        // };
         const getDayName = (dateString: string): string => {
         const days = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
         const date = new Date(dateString);
         return days[date.getDay()];
         };
-        const validateServiceDate = (service: SERVICE, dateString: string): boolean => {
-            const dayFromDate = getDayName(dateString);
-            const expectedDay = SERVICE_DAYS[service];
-            return dayFromDate === expectedDay;
-        };
+        // const validateServiceDate = (service: SERVICE, dateString: string): boolean => {
+        //     const dayFromDate = getDayName(dateString);
+        //     const expectedDay = SERVICE_DAYS[service];
+        //     return dayFromDate === expectedDay;
+        // };
         
         const attendanceExists = await database.attendance.findFirst({
             where: {
@@ -52,12 +52,12 @@ export class Attendance {
             const response: AttendanceResponse =  {error: true, message: "Attendance for this location, service and date already exists"};
             return response;
         }
-        const isValid = validateServiceDate(data.service, attendanceDate.toISOString());
+        // const isValid = validateServiceDate(data.service, attendanceDate.toISOString());
 
-        if (!isValid) {
-            const response: AttendanceResponse =  {error: true, message: "The selected date does not match the expected service day!"};
-            return response;
-        }
+        // if (!isValid) {
+        //     const response: AttendanceResponse =  {error: true, message: "The selected date does not match the expected service day!"};
+        //     return response;
+        // }
         try {
             const attendance = await database.attendance.create({
                 data: {
